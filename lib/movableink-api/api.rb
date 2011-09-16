@@ -43,6 +43,24 @@ module MovableInk
       Crack::JSON.parse response.body
     end
 
+    # POST a specific MovableInk API call with parameters
+    #
+    # api_path - The API method to invoke
+    # params   - A Hash containing any parameters to be sent with this request
+    #
+    # Examples
+    #
+    #   post('live_pics', {:name => 'some name', ...})
+    #   # => {:live_pic => {:name => 'some name', ...}}
+    #
+    # Returns a Hash representation of the JSON response body
+    def self.post(api_path, params = nil)
+      url = build_url(api_path)
+      params["token"] = token # POST params overwrite params in URI
+      response = Net::HTTP.post_form url, params
+      Crack::JSON.parse response.body
+    end
+
     # Build a URI object reprsenting an API URL based on the parameters provided
     #
     # api_path - The API method to invoke

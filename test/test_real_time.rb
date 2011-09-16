@@ -37,4 +37,30 @@ class TestRealTime < Test::Unit::TestCase
     assert !response.impressions.nil?
   end
 
+  def test_live_pic_wrapper
+    lp = LivePic.new
+    lp.name   = "My Name"
+    lp.height = "10"
+    params = lp.to_params
+    assert params["live_pic[name]"], "My Name"
+    assert params["live_pic[height]"], "10"
+  end
+
+  def test_create_live_pic
+    MovableInk::API.token = ::API_KEY
+    lp = LivePic.new
+    lp.name   = "My Name"
+    lp.height = "10"
+    lp.width  = "10"
+    lp.external_url = "http://google.com/"
+    lp.x_offset = "20"
+    lp.y_offset = "20"
+    lp.target_url = 'http://google.com/'
+    new_live_pic = MovableInk::API.create_live_pic lp
+
+    assert new_live_pic.kind_of?(LivePic)
+    assert new_live_pic.name, "My Name"
+    assert new_live_pic.height, "10"
+  end
+
 end

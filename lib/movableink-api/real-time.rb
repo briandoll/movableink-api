@@ -49,4 +49,22 @@ module RealTime
     LivePicStats.new response["live_pic"]["stats"]
   end
   
+  # Public: Create a live pic using specified parameters
+  #
+  # live_pic  - A LivePic instance with properties set according to our needs
+  #
+  # Examples
+  #
+  #   lp = LivePic.new(:name => "my name", ...)
+  #   MovableInk::API.create_live_pic lp
+  #   # => #<LivePic name='my name', id='123' ...>
+  #
+  # Returns a LivePic instance that represents the newly created live pic
+  # Returns ArgumentError if MovableInk::API.token is empty
+  def create_live_pic(live_pic)
+    params = live_pic.to_params
+    response = post("live_pics", params)
+    LivePic.new response["live_pic"]
+  end
+  
 end
