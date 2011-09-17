@@ -1,5 +1,8 @@
 module MovableInk
-  class API
+  
+  class MovableInkError < StandardError; end
+  
+  class MovableInkClient
 
     # This library supports v1 of the MovableInk API
     NAMESPACE = "http://movableink.com/api/v1/"
@@ -40,7 +43,7 @@ module MovableInk
     def self.get(api_path, params = nil)
       url = build_url(api_path, params)
       response = Net::HTTP.get_response url
-      Crack::JSON.parse response.body
+      process_response response
     end
 
     # POST a specific MovableInk API call with parameters
@@ -58,7 +61,27 @@ module MovableInk
       url = build_url(api_path)
       params["token"] = token # POST params overwrite params in URI
       response = Net::HTTP.post_form url, params
-      Crack::JSON.parse response.body
+      process_response response
+    end
+
+    # PUT a specific MovableInk API call with parameters
+    #
+    # api_path - The API method to invoke
+    # params   - A Hash containing any parameters to be sent with this request
+    #
+    # Examples
+    #
+    #   put('live_pics', {:name => 'some name', ...})
+    #   # => {:live_pic => {:name => 'some name', ...}}
+    #
+    # Returns a Hash representation of the JSON response body
+    def self.put(api_path, params = nil)
+      url = build_url(api_path)
+      request = Net::HTTP::Put.new(url.path)
+      params["token"] = token # PUT params overwrite params in URI
+      request.set_form_data params
+      response = Net::HTTP.new(url.host, url.port).start {|http| http.request(request) }
+      process_response response
     end
 
     # Build a URI object reprsenting an API URL based on the parameters provided
@@ -87,9 +110,20 @@ module MovableInk
     # Currently only checks to see that the MovableInk::API.token is set
     #
     # Returns nothing.
-    # Returns ArgumentError if the MovableInk::API.token is empty
+    # Raises ArgumentError if the MovableInk::API.token is empty
     def self.validate_request
       raise ArgumentError.new "Please set your MovableInk API token before any calls to the API. ex. MovableInk::API.token(yourtoken)" if token.nil?
+    end
+    
+    # Convert response body to JSON if the response is not an error
+    #
+    # Returns a JSON representation of the response body
+    # Raises MovableInkError if there is an error in the response
+    def self.process_response(response)
+      resp = Crack::JSON.parse response.body
+      err  = resp["errors"]
+      raise MovableInkError.new "Error: #{resp["message"]} - #{err["base"]}" if err
+      resp
     end
     
   end

@@ -127,8 +127,10 @@ class LivePics
 
   def initialize(response)
     lp = []
-    response["live_pics"].each do |live_pic|
-      lp << LivePic.new(live_pic)
+    if pics = response["live_pics"]
+      pics.each do |live_pic|
+        lp << LivePic.new(live_pic)
+      end
     end
     self.live_pics = lp
   end

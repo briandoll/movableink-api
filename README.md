@@ -16,16 +16,31 @@ Put movableink-api in your Gemfile:
 
     gem 'movableink-api'
 
+
+Include the Module:
+
+    include MovableInk
+    
+    
 **Real-Time Content:**
 
-    MovableInk::API.live_pics
+    MovableInkClient.live_pics
     # => [#<LivePic collection_id=nil, ...>, ...]
 
-    MovableInk::API.live_pic '123'
+    MovableInkClient.live_pic '123'
     # => #<LivePic id=123, ...>
     
-    MovableInk::API.live_pic_stats '123'
+    MovableInkClient.live_pic_stats '123'
     # => #<LivePicStats id=123, ...>
+
+    lp = LivePic.new
+    lp.name = "My Name"
+    ...
+    new_live_pic = MovableInkClient.create_live_pic lp
+    # => #<LivePic id=123, ...>
+
+    MovableInkClient.update_live_pic
+
 
 
 **Creative Optimizers**
