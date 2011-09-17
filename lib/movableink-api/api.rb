@@ -84,6 +84,15 @@ module MovableInk
       process_response response
     end
 
+    def self.delete(api_path)
+      url = build_url(api_path)
+      http = Net::HTTP.new(url.host)
+      request = Net::HTTP::Delete.new("#{url.path}?#{url.query}")
+      response = http.request(request)
+      response.kind_of?(Net::HTTPOK)
+    end
+
+
     # Build a URI object reprsenting an API URL based on the parameters provided
     #
     # api_path - The API method to invoke
@@ -95,7 +104,7 @@ module MovableInk
     #   # => #<URI::HTTP:0x101afe1a8 URL:http://movableink.com/api/v1/live_pics?token=xxxxx>
     #
     # Returns a URI object representing the URL for an API call
-    # Returns ArgumentError if the MovableInk::API.token is empty
+    # Returns ArgumentError if the MovableInkClient.token is empty
     def self.build_url(api_path, params = nil)
       validate_request
       url = URI.parse(NAMESPACE + api_path)
@@ -107,12 +116,12 @@ module MovableInk
     
     # Validate that all required parameters are set for a given API call
     #
-    # Currently only checks to see that the MovableInk::API.token is set
+    # Currently only checks to see that the MovableInkClient.token is set
     #
     # Returns nothing.
-    # Raises ArgumentError if the MovableInk::API.token is empty
+    # Raises ArgumentError if the MovableInkClient.token is empty
     def self.validate_request
-      raise ArgumentError.new "Please set your MovableInk API token before any calls to the API. ex. MovableInk::API.token(yourtoken)" if token.nil?
+      raise ArgumentError.new "Please set your MovableInk API token before any calls to the API. ex. MovableInkClient.token(yourtoken)" if token.nil?
     end
     
     # Convert response body to JSON if the response is not an error

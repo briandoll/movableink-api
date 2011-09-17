@@ -7,11 +7,11 @@ module RealTime
   #
   # Examples
   #
-  #   MovableInk::API.live_pics
+  #   MovableInkClient.live_pics
   #   # => [#<LivePic collection_id=nil, ...>, ...]
   #
   # Returns an array of LivePic instances
-  # Returns ArgumentError if MovableInk::API.token is empty
+  # Returns ArgumentError if MovableInkClient.token is empty
   def live_pics(offset = nil, limit = nil)
     pics = LivePics.new(get("live_pics", {:offset => offset, :limit => limit}))
     pics.live_pics
@@ -24,11 +24,11 @@ module RealTime
   #
   # Examples
   #
-  #   MovableInk::API.live_pic '123'
+  #   MovableInkClient.live_pic '123'
   #   # => #<LivePic id=123, ...>
   #
   # Returns a LivePic instance
-  # Returns ArgumentError if MovableInk::API.token is empty
+  # Returns ArgumentError if MovableInkClient.token is empty
   def live_pic(live_pic_id)
     response = get("live_pics/#{live_pic_id}")
     LivePic.new response["live_pic"]
@@ -40,11 +40,11 @@ module RealTime
   #
   # Examples
   #
-  #   MovableInk::API.live_pic_stats '123'
+  #   MovableInkClient.live_pic_stats '123'
   #   # => #<LivePicStats id=123, ...>
   #
   # Returns a LivePicStats instance
-  # Returns ArgumentError if MovableInk::API.token is empty
+  # Returns ArgumentError if MovableInkClient.token is empty
   def live_pic_stats(live_pic_id)
     response = get("live_pics/#{live_pic_id}/stats")
     LivePicStats.new response["live_pic"]["stats"]
@@ -57,11 +57,11 @@ module RealTime
   # Examples
   #
   #   lp = LivePic.new(:name => "my name", ...)
-  #   MovableInk::API.create_live_pic lp
+  #   MovableInkClient.create_live_pic lp
   #   # => #<LivePic name='my name', id='123' ...>
   #
   # Returns a LivePic instance that represents the newly created live pic
-  # Returns ArgumentError if MovableInk::API.token is empty
+  # Returns ArgumentError if MovableInkClient.token is empty
   def create_live_pic(live_pic)
     params = live_pic.to_params
     response = post("live_pics", params)
@@ -74,17 +74,34 @@ module RealTime
   #
   # Examples
   #
-  #   lp = MovableInk::API.live_pics[0]
+  #   lp = MovableInkClient.live_pics.first
   #   lp.name = "Updated Name"
-  #   MovableInk::API.update_live_pic(lp)
+  #   MovableInkClient.update_live_pic(lp)
   #   # => #<LivePic name='Updated Name', id='123' ...>
   #
   # Returns a LivePic instance that represents the newly udpated live pic
-  # Returns ArgumentError if MovableInk::API.token is empty
+  # Returns ArgumentError if MovableInkClient.token is empty
   def update_live_pic(live_pic)
     params = live_pic.to_params
     response = put("live_pics/#{live_pic.id}", params)
     LivePic.new response["live_pic"]
+  end
+  
+  # Public: Delete a live pic
+  #
+  # live_pic  - The live pic to delete
+  #
+  # Examples
+  #
+  #   lp = MovableInkClient.live_pic.first
+  #   MovableInkClient.delete_live_pic(lp)
+  #   # => true
+  #
+  # Returns true if the live pic was deleted, otherwise false
+  # Returns ArgumentError if MovableInkClient.token is empty
+  def delete_live_pic(live_pic)
+    response = delete("live_pics/#{live_pic.id}")
+
   end
   
 end

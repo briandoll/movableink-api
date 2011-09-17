@@ -40,7 +40,11 @@ Include the Module:
     # => #<LivePic id=123, ...>
 
     MovableInkClient.update_live_pic
+    # => #<LivePic id=123, ...>
 
+    lp = MovableInkClient.live_pics.first
+    MovableInkClient.delete_live_pic lp
+    # => true
 
 
 **Creative Optimizers**

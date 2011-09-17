@@ -65,13 +65,20 @@ class TestRealTime < Test::Unit::TestCase
 
   def test_update_live_pic
     MovableInkClient.token = ::API_KEY
-    lp = MovableInkClient.live_pics[0]
+    lp = MovableInkClient.live_pics.first
     updated_pic_id = lp.id
     name = "Updated Name - #{Time.now.to_i}"
     lp.name = name
     MovableInkClient.update_live_pic lp
     updated_pic = MovableInkClient.live_pic updated_pic_id
     assert updated_pic.name, name
+  end
+
+  def test_delete_live_pic
+    MovableInkClient.token = ::API_KEY
+    lp = MovableInkClient.live_pics.first
+    deleted = MovableInkClient.delete_live_pic lp
+    assert deleted
   end
 
 end
